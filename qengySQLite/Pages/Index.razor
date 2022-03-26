@@ -1,0 +1,102 @@
+﻿@using Microsoft.EntityFrameworkCore
+@page "/"
+
+<PageTitle>qengy SQLite - Project with classes that show how to use SQLite in Blazor WebAssembly</PageTitle>
+
+<MudContainer Class="py-5 px-5 mud-secondary">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="pb-5"><b>Project with classes that show how to use SQLite in Blazor WebAssembly</b></MudText>
+    <MudText Align="Align.Center">My name is <b>Pablo Cano</b> and I am a Developer in .NET Technologies. I am an accomplished coder and programmer, and I enjoy using my skills to contribute to the exciting technological advances that happen every day.</MudText>
+</MudContainer>
+
+<div Class="py-5 px-5 mud-theme-primary">
+    <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Dark"><b>App to show SQLite database use in WebAssembly</b></MudText>
+</div>
+
+<MudContainer Class="py-5 px-5 mud-secondary">
+    <MudDivider/>
+    <MudGrid Class="py-5">
+        <MudItem xs="12" sm="12" md="12" Class="d-flex align-center">
+            <MudPaper Elevation="0" Class="mud-width-full">
+                <MudText>Function that create a record</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="5">
+            <MudPaper Elevation="0" Class="mud-width-full">
+                <MudTextField @bind-Value="Name" Label="Name" Variant="Variant.Outlined" FullWidth="true"></MudTextField>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="5" Class="d-flex align-center">
+            <MudPaper Elevation="0" Class="mud-width-full">
+                <MudTextField @bind-Value="Surname" Label="Surname" Variant="Variant.Outlined" FullWidth="true"></MudTextField>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="2" Class="d-flex align-center">
+            <MudPaper Elevation="0" Class="mud-width-full">
+                <MudButton Disabled="Name.Length == 0 || Surname.Length == 0" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateRecord">Create record</MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    <MudDivider />
+</MudContainer>
+
+<MudContainer Class="py-5 px-5 mud-secondary">
+    <MudSimpleTable Hover="true" Dense="true" Bordered="true">
+        <thead>
+            <tr>
+                @foreach (var h in headings)
+                {
+                    <th>@h</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rep in persons)
+            {
+                <tr>
+                    <td><MudText>@rep.ID</MudText></td>
+                    <td><MudText>@rep.Name</MudText></td>
+                    <td><MudText>@rep.Surname</MudText></td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudContainer>
+
+<div Class="py-10 px-5 mud-theme-primary">
+    <MudImage Src="imgs/logo-mono.png" Width="50"></MudImage>
+    <MudText Color="Color.Dark"><b>admin@qengy.com</b></MudText>
+    <MudText Color="Color.Dark">Copyright © 2022 qengy.</MudText>
+</div>
+
+@code {
+    private List<Person> persons = new List<Person>();
+    private string[] headings = { "ID", "Name", "Surname" };
+    private string? Name { get; set; } = "";
+    private string? Surname { get; set; } = "";
+
+    public class Person
+    {
+        public Guid ID { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+    }
+
+    public class TestDBContext : DbContext
+    {
+        public DbSet<Person>? Persons { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+            => options.UseSqlite($"Data source=test.db");
+    }
+
+    async Task CreateRecord()
+    {
+        TestDBContext db = new TestDBContext();
+        await db.Database.EnsureCreatedAsync();
+        db.Persons.Add(new Person { ID= Guid.NewGuid(), Name=Name, Surname=Surname });
+        await db.SaveChangesAsync();
+        persons = db.Persons.ToList();
+        Name = "";
+        Surname = "";
+    }
+
+}
