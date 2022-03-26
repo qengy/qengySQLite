@@ -10,9 +10,6 @@ It is perfect for .NET developers who want to rapidly build web applications wit
 
 - Function that based on the regex of document returns the type of document.
 
-## Demo
-- [sqlite.qengy.com](https://sqlite.qengy.com)
-
 ## Prerequisites
 - [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x
 - wasm-tools must be installed, the .NET WebAssembly build tools
