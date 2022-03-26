@@ -92,7 +92,7 @@
     {
         TestDBContext db = new TestDBContext();
         await db.Database.EnsureCreatedAsync();
-        db.Persons.Add(new Person { ID= Guid.NewGuid(), Name=Name, Surname=Surname });
+        db.Persons.Add(new Person { ID = Guid.NewGuid(), Name = Name, Surname = Surname });
         await db.SaveChangesAsync();
         persons = db.Persons.ToList();
         Name = "";
